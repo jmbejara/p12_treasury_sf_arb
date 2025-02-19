@@ -3,7 +3,42 @@ Example Project Using the ChartBook Template
 
 ## About this project
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Replicate the data pull and the construction of the Treasury-Spot Futures spread. The Treasury spot-futures arbitrage trade involves exploiting the price discrepancy between Treasury futures contracts and the underlying Treasury securities in the cash (spot) market. By simultaneously buying (or selling) the mispriced asset and selling (or buying) its equivalent in the other market, arbitrageurs aim to lock in a risk-free profit, accounting for carry costs, accrued interest, and delivery options.
+
+
+
+## Plan for the project
+
+1. LaTeX document 
+with nature of the replication project and result
+auto?
+table of your own summary statistics AND charts (figures and or tables usually be one of each?)
+
+2. notebook for analysis (one for orginal paper date, one for current date)
+
+internet appendix:
+Figure A1(d)
+
+What about: 
+paper “Segmented Arbitrage”:
+Treasury Spot-Fut value for
+Figure 1(a), 1(b), 2, 5(a), 
+Table 1, 2(b), 5, 6, 8, 10
+
+
+
+
+
+
+
+3. pull.py
+4. calc.py
+4. clean vs dirty data file
+5. unit tests
+6. .env file
+7. settings.py
+8. requirements.txt
+
 
 ## Quick Start
 
