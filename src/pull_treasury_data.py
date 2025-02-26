@@ -1,83 +1,248 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
-pull_treasury_data.py
+Fetch and process CRSP Treasury data via WRDS.
 
-This module reads the raw Treasury Spot-Futures data from an Excel file and the
-USD OIS Rates from a Stata file. It then performs initial cleaning and computes
-the last business day of each month (for matching contract maturities). The cleaned
-data is saved as an intermediate pickle file for further processing.
+References:
+  - CRSP US Treasury Database Guide:
+    https://www.crsp.org/wp-content/uploads/guides/CRSP_US_Treasury_Database_Guide_for_SAS_ASCII_EXCEL_R.pdf
 
-Usage:
-    python pull_treasury_data.py
+Tables Used:
+  - TFZ_DLY (Daily Time Series Items):
+      * kytreasno: Unique Treasury record ID
+      * kycrspid: CRSP-assigned identifier
+      * caldt: Quotation date
+      * tdbid: Daily bid price
+      * tdask: Daily ask price
+      * tdaccint: Accrued interest
+      * tdyld: Yield (annualized, bond-equivalent)
+
+  - TFZ_ISS (Issue Descriptions):
+      * tcusip: Treasury CUSIP
+      * tdatdt: Original issuance date
+      * tmatdt: Maturity date at issue
+      * tcouprt: Annual coupon rate
+      * itype: Issue type (1 = noncallable bonds, 2 = noncallable notes)
+
+Credits:
+  - Original version prepared by Younghun Lee for use in class.
 """
 
-import os
+from datetime import datetime
+from pathlib import Path
+
 import pandas as pd
+import wrds
 
-def get_last_business_day_df(dates_df):
-    """Determine the last business day of each month."""
-    dates_df['Year'] = dates_df['Date'].dt.year
-    dates_df['Month'] = dates_df['Date'].dt.month
-    last_dates = dates_df.groupby(['Year', 'Month'])['Date'].max().reset_index()
-    last_dates['Mat_Day'] = last_dates['Date'].dt.day
-    last_dates.rename(columns={'Month': 'Mat_Month', 'Year': 'Mat_Year'}, inplace=True)
-    return last_dates[['Mat_Month', 'Mat_Year', 'Mat_Day']]
+from settings import config
 
-def pull_treasury_data():
-    # Define input file paths
-    data_file = os.path.join("input", "treasury_spot_futures.xlsx")
-    ois_file = os.path.join("input", "USD_OIS_Rates.dta")
-    
-    # -------------------------
-    # Step 1. Import date column to compute last business day for each month.
-    df_dates = pd.read_excel(data_file, sheet_name="T_SF", skiprows=6, usecols="A", names=["Date"])
-    df_dates['Date'] = pd.to_datetime(df_dates['Date'], errors='coerce')
-    df_dates = df_dates.dropna(subset=["Date"]).sort_values("Date")
-    last_day_df = get_last_business_day_df(df_dates)
-    if len(last_day_df) > 0:
-        # Drop the last observation if necessary (as in the original Stata code)
-        last_day_df = last_day_df.iloc[:-1].reset_index(drop=True)
-    
-    # -------------------------
-    # Step 2. Import the full Treasury Spot-Futures data.
-    col_names = [
-        "Date", 
-        "Implied_Repo_1_10", "Vol_1_10", "Contract_1_10", "Price_1_10",
-        "Implied_Repo_1_5",  "Vol_1_5",  "Contract_1_5",  "Price_1_5",
-        "Implied_Repo_1_2",  "Vol_1_2",  "Contract_1_2",  "Price_1_2",
-        "Implied_Repo_1_20", "Vol_1_20", "Contract_1_20", "Price_1_20",
-        "Implied_Repo_1_30", "Vol_1_30", "Contract_1_30", "Price_1_30",
-        "Implied_Repo_2_10", "Vol_2_10", "Contract_2_10", "Price_2_10",
-        "Implied_Repo_2_5",  "Vol_2_5",  "Contract_2_5",  "Price_2_5",
-        "Implied_Repo_2_2",  "Vol_2_2",  "Contract_2_2",  "Price_2_2",
-        "Implied_Repo_2_20", "Vol_2_20", "Contract_2_20", "Price_2_20",
-        "Implied_Repo_2_30", "Vol_2_30", "Contract_2_30", "Price_2_30"
-    ]
-    df = pd.read_excel(data_file, sheet_name="T_SF", skiprows=6, names=col_names)
-    df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
-    df = df.dropna(subset=["Date"]).copy()
-    
-    # Convert numeric-like columns to numbers
-    numeric_cols = [col for col in df.columns if any(prefix in col for prefix in ["Implied_Repo", "Vol_", "Price_"])]
-    for col in numeric_cols:
-        df[col] = pd.to_numeric(df[col], errors='coerce')
-    
-    # -------------------------
-    # Read the USD OIS Rates file.
-    df_ois = pd.read_stata(ois_file)
-    df_ois['date'] = pd.to_datetime(df_ois['date'])
-    
-    # Save the pulled data to an intermediate file
-    intermediate_data = {
-        "treasury_df": df,
-        "ois_df": df_ois,
-        "last_day_df": last_day_df
-    }
-    os.makedirs("intermediate", exist_ok=True)
-    intermediate_file = os.path.join("intermediate", "treasury_intermediate.pkl")
-    pd.to_pickle(intermediate_data, intermediate_file)
-    print(f"Pulled data saved to {intermediate_file}")
-    
-if __name__ == '__main__':
-    pull_treasury_data()
+# Define data directory and username from environment settings
+DATA_DIR = Path(config("DATA_DIR"))
+WRDS_USERNAME = config("WRDS_USERNAME")
+
+
+def pull_CRSP_treasury_daily(
+    start_date="1970-01-01",
+    end_date="2023-12-31",
+    wrds_username=WRDS_USERNAME,
+):
+    """
+    Retrieve daily Treasury quotes (TFZ_DLY) over a specified date range.
+    Constructs a 'price' field as the average of bid/ask plus accrued interest.
+    """
+    query = f"""
+    SELECT 
+        kytreasno,
+        kycrspid,
+        caldt,
+        tdbid,
+        tdask,
+        tdaccint,
+        tdyld,
+        ((tdbid + tdask) / 2.0 + tdaccint) AS price
+    FROM crspm.tfz_dly
+    WHERE caldt BETWEEN '{start_date}' AND '{end_date}'
+    """
+
+    db = wrds.Connection(wrds_username=wrds_username)
+    df = db.raw_sql(query, date_cols=["tdatdt", "tmatdt"])
+    db.close()
+    return df
+
+
+def pull_CRSP_treasury_info(wrds_username=WRDS_USERNAME):
+    """
+    Acquire treasury issue metadata (TFZ_ISS), including CUSIP, coupon,
+    and maturity details, for bonds/notes (itype in [1,2]).
+    """
+    query = """
+        SELECT
+            kytreasno,
+            kycrspid,
+            tcusip,
+            tdatdt,
+            tmatdt,
+            tcouprt,
+            itype,
+            ROUND((tmatdt - tdatdt) / 365.0) AS original_maturity
+        FROM crspm.tfz_iss AS iss
+        WHERE iss.itype IN (1, 2)
+    """
+
+    db = wrds.Connection(wrds_username=wrds_username)
+    df = db.raw_sql(query, date_cols=["tdatdt", "tmatdt"])
+    db.close()
+    return df
+
+
+def calc_runness(data):
+    """
+    Calculate runness for the securities issued in 1980 or later.
+
+    This is due to the following condition of Gurkaynak, Sack, and Wright (2007):
+        iv) Exclude on-the-run issues and 1st off-the-run issues
+        for 2,3,5, 7, 10, 20, 30 years securities issued in 1980 or later.
+    """
+
+    def _calc_runness(df):
+        temp = df.sort_values(by=["caldt", "original_maturity", "tdatdt"])
+        next_temp = (
+            temp.groupby(["caldt", "original_maturity"])["tdatdt"].rank(
+                method="first", ascending=False
+            )
+            - 1
+        )
+        return next_temp
+
+    data_run_ = data[data["caldt"] >= "1980"]
+    runs = _calc_runness(data_run_)
+    data["run"] = 0
+    data.loc[data_run_.index, "run"] = runs
+    return data
+
+
+def pull_CRSP_treasury_consolidated(
+    start_date="1970-01-01",
+    end_date=datetime.today().strftime("%Y-%m-%d"),
+    wrds_username=WRDS_USERNAME,
+):
+    """
+    Retrieve a merged dataset with daily quotes (TFZ_DLY) and issue details (TFZ_ISS).
+    Incorporates fields for computed dirty price (bid/ask plus accrued interest),
+    maturity metrics, and whether the security is callable.
+    """
+    query = f"""
+    SELECT
+        tfz.kytreasno,
+        tfz.kycrspid,
+        iss.tcusip,
+        tfz.caldt,
+        iss.tdatdt,
+        iss.tmatdt,
+        iss.tfcaldt,
+        tfz.tdbid,
+        tfz.tdask,
+        tfz.tdaccint,
+        tfz.tdyld,
+        ((tfz.tdbid + tfz.tdask) / 2.0 + tfz.tdaccint) AS price,
+        iss.tcouprt,
+        iss.itype,
+        ROUND((iss.tmatdt - iss.tdatdt) / 365.0) AS original_maturity,
+        ROUND((iss.tmatdt - tfz.caldt) / 365.0) AS years_to_maturity,
+        tfz.tdduratn,
+        tfz.tdretnua
+    FROM crspm.tfz_dly AS tfz
+    LEFT JOIN crspm.tfz_iss AS iss
+        ON tfz.kytreasno = iss.kytreasno
+        AND tfz.kycrspid = iss.kycrspid
+    WHERE
+        tfz.caldt BETWEEN '{start_date}' AND '{end_date}'
+        AND iss.itype IN (1, 2)
+    """
+
+    db = wrds.Connection(wrds_username=wrds_username)
+    df = db.raw_sql(query, date_cols=["caldt", "tdatdt", "tmatdt", "tfcaldt"])
+    db.close()
+
+    df["days_to_maturity"] = (df["tmatdt"] - df["caldt"]).dt.days
+    df["tfcaldt"] = df["tfcaldt"].fillna(0)
+    df["callable"] = df["tfcaldt"] != 0
+    df = df.reset_index(drop=True)
+    return df
+
+
+def load_CRSP_treasury_daily(data_dir=DATA_DIR):
+    """
+    Load previously stored daily quotes (TFZ_DLY) from a parquet file.
+    """
+    path = data_dir / "TFZ_DAILY.parquet"
+    df = pd.read_parquet(path)
+    return df
+
+
+def load_CRSP_treasury_info(data_dir=DATA_DIR):
+    """
+    Load previously stored TFZ_ISS metadata from a parquet file.
+    """
+    path = data_dir / "TFZ_INFO.parquet"
+    df = pd.read_parquet(path)
+    return df
+
+
+def load_CRSP_treasury_consolidated(data_dir=DATA_DIR, with_runness=True):
+    """
+    Load the merged CRSP Treasury data (TFZ_consolidated or TFZ_with_runness)
+    from a parquet file, depending on whether runness is included.
+    """
+    if with_runness:
+        path = data_dir / "TFZ_with_runness.parquet"
+    else:
+        path = data_dir / "TFZ_consolidated.parquet"
+    df = pd.read_parquet(path)
+    return df
+
+
+def _demo():
+    """
+    Simple demonstration of data pulling, merging, and runness calculation.
+    """
+    # Obtain daily data
+    df = pull_CRSP_treasury_daily(data_dir=DATA_DIR)
+    df.info()
+
+    # Obtain issue information
+    df = pull_CRSP_treasury_info(data_dir=DATA_DIR)
+    df.info()
+
+    # Create consolidated dataset
+    df = pull_CRSP_treasury_consolidated(data_dir=DATA_DIR)
+    df.info()
+
+    # Compute runness and show data summary
+    df = calc_runness(df)
+    df.info()
+    return df
+
+
+if __name__ == "__main__":
+    # 1) Pull daily quotes
+    df = pull_CRSP_treasury_daily(
+        start_date="1970-01-01",
+        end_date="2023-12-31",
+        wrds_username=WRDS_USERNAME,
+    )
+    path = DATA_DIR / "TFZ_DAILY.parquet"
+    df.to_parquet(path)
+
+    # 2) Pull issue metadata
+    df = pull_CRSP_treasury_info(wrds_username=WRDS_USERNAME)
+    path = DATA_DIR / "TFZ_INFO.parquet"
+    df.to_parquet(path)
+
+    # 3) Pull and merge quotes + metadata
+    df = pull_CRSP_treasury_consolidated(wrds_username=WRDS_USERNAME)
+    path = DATA_DIR / "TFZ_consolidated.parquet"
+    df.to_parquet(path)
+
+    # 4) Runness calculation
+    df = calc_runness(df)
+    path = DATA_DIR / "TFZ_with_runness.parquet"
+    df.to_parquet(path)
