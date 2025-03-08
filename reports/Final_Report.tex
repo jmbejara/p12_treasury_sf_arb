@@ -1,0 +1,115 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{amsmath}
+\usepackage{float}
+\usepackage{pdflscape}
+\usepackage{subfigure}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{caption}
+\setlength{\abovecaptionskip}{0pt}
+\usepackage{rotating}
+\usepackage{booktabs} 
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{adjustbox}
+\usepackage{siunitx} 
+\usepackage{graphicx} 
+\usepackage{pdflscape} 
+\usepackage[a4paper, margin=1in]{geometry} 
+\usepackage{natbib} 
+
+\title{Treasury Spot-Futures}
+\author{Haoshu (Harry) Wang, Guanyu (James) Chen}
+\date{March 7, 2025} 
+
+\begin{document}
+
+\maketitle
+\section{Abstract}
+
+In this study, we aim to replicate the Treasury Spot-Futures arbitrage spread series presented in Figure A1d of Segmented Arbitrage Siriwardane (2023). This arbitrage spread measures the deviation between the futures-implied risk-free rate and the maturity-matched Overnight Indexed Swap (OIS) rate. By extracting and processing Treasury futures and OIS rate data, we conducted a thorough examination to validate the original findings. Our replication effort involved translating the authors' Stata code into Python, implementing a systematic data retrieval process, and automating spread computations. The full replication process, methodology, and automated script are documented in our public GitHub repository, ensuring the study remains up-to-date with newly available data.
+
+\section{Introduction}
+
+Siriwardane(2023) is a well-known paper that examines arbitrage activity in segmented financial markets, focusing on deviations from no-arbitrage pricing. While the paper explores various arbitrage spreads across multiple asset classes, for this project, we replicated the Treasury Spot-Futures arbitrage spread, referencing Figure A1d in the Appendix. Specifically, we were tasked with reconstructing the time-series of the spread, which measures the difference between the futures-implied risk-free rate and the maturity-matched Overnight Indexed Swap (OIS) rate. This involved extracting Treasury futures data, identifying the Cheapest-to-Deliver (CTD) securities, and computing arbitrage spreads following the methodology outlined in the paper’s Internet Appendix. Additionally, we extended the analysis beyond the original dataset by automating data retrieval and updating the arbitrage spread computation in Python.
+
+\section{Literature Review} 
+
+The Treasury Spot-Futures arbitrage spread, which measures the difference between the futures-implied risk-free rate and the maturity-matched Overnight Indexed Swap (OIS) rate, has been extensively studied in the context of financial intermediation and market segmentation. Understanding this spread is crucial for comprehending the dynamics of arbitrage activities and the constraints faced by financial intermediaries.​
+
+\subsection{Segmented Arbitrage}
+Siriwardane's "Segmented Arbitrage,"(2023) investigates how frictions and constraints affect arbitrage activities across various financial markets, including equity, fixed income, and foreign exchange. The authors find that the average pairwise correlation between 29 arbitrage spreads is only 21 percent, suggesting that traditional intermediary asset pricing models may not fully capture the dynamics at play. They propose that two types of segmentation—funding and balance sheet—drive these arbitrage dynamics. Funding segmentation implies that certain trades rely on specific funding sources, making their arbitrage spreads sensitive to localized funding shocks. Balance sheet segmentation indicates that intermediaries specialize in certain trades, so arbitrage spreads are sensitive to idiosyncratic balance sheet shocks. ​
+\subsection{Treasury Cash-Futures Basis Trade}
+The Treasury cash-futures basis trade is a convergence strategy that profits from the spread between the price of Treasury futures contracts and the Treasury securities deliverable into those futures. Typically, this involves a repo-financed purchase of a Treasury security and the simultaneous sale of a corresponding Treasury futures contract. The profitability of this trade depends on the spread between the cash and futures prices being greater than the associated costs, such as financing and transaction fees. ​
+\subsection{Hedge Funds and the Treasury Cash-Futures Disconnect}
+Research by the Office of Financial Research highlights that higher dealer Treasury exposure is associated with a higher arbitrage spread in the cash-futures basis trade. This relationship underscores the impact of dealer balance sheet constraints on arbitrage opportunities. When dealers have substantial Treasury holdings, their capacity to engage in additional arbitrage activities diminishes, leading to wider spreads. ​
+\subsection{Cash-and-Carry Arbitrage}
+Cash-and-carry arbitrage is a market-neutral strategy that exploits pricing inefficiencies between the spot and futures markets. It involves purchasing an asset in the spot market and simultaneously selling a futures contract on the same asset. The goal is to profit from the convergence of the spot and futures prices over time. This strategy is particularly relevant in the context of Treasury spot-futures arbitrage, where traders seek to capitalize on discrepancies between the cash price of Treasury securities and their corresponding futures prices. ​
+Collectively, these studies provide a comprehensive understanding of the factors influencing Treasury spot-futures arbitrage spreads. They highlight the roles of funding constraints, balance sheet limitations, and market frictions in shaping arbitrage opportunities and the behavior of financial intermediaries.
+
+\section{Table 1 Replication}
+\subsection{Paper}
+
+NEED TO WORK ON
+
+\subsection{Challenges and Successes}
+
+1. WRDS vs. Bloomberg Data - Although the original methodology in Segmented Arbitrage suggests using Bloomberg data for extracting Treasury futures and Overnight Indexed Swap (OIS) rates, we were fortunate to have access to the Professor Jeremy Bejarano’s example code, which demonstrated how to obtain the necessary data using WRDS instead. This significantly streamlined our workflow, as WRDS provides structured and easily accessible datasets for academic research. Unlike Bloomberg, which requires a terminal login and manual extraction, WRDS allows for automated queries, saving us considerable time in the data retrieval process. The structured nature of WRDS data also helped in ensuring consistency across different arbitrage spread computations.
+
+2. Environment Setup Issues - During the implementation phase, Haoshu encountered persistent issues setting up the necessary Python environment on his laptop. Several required packages failed to install properly, likely due to compatibility issues with his system configuration. As a workaround, most of Haoshu’s code was developed and pushed to GitHub, while Guanyu ran the scripts locally for execution and validation. This division of work allowed the project to continue without major delays, ensuring that the replication and extension of the arbitrage spread calculations proceeded smoothly despite technical setbacks.
+
+
+\newpage
+
+\subsection{Results}
+
+%\centering
+
+NEED WORK
+
+
+\newpage
+
+
+\section{Summary Statistics}
+
+NEED WORK
+
+
+
+
+
+
+\section{Summary}
+This study aimed to replicate the findings of Segmented Arbitrage (Siriwardane 2023), specifically focusing on the Treasury Spot-Futures arbitrage spread presented in Figure A1d. By following the methodology outlined in the paper’s Internet Appendix, we successfully replicated the spread series and ensured accuracy in our calculations. Unlike the original study, which suggested using Bloomberg data, we were fortunate to have access to a professor-provided example that utilized WRDS for data extraction. This significantly streamlined our workflow by allowing us to automate the data retrieval process rather than relying on manual Bloomberg extractions.
+Despite our success in replication, we encountered challenges related to the coding environment. Haoshu experienced persistent issues in setting up the necessary Python environment on his laptop, as certain package installations repeatedly failed. We successfully overcame this by Haoshu writing and pushing the code to GitHub, while Guanyu executed and tested the scripts locally. This collaborative approach ensured that the project continued without major delays, ultimately allowing us to achieve a high-fidelity replication.
+Overall, our replication effort closely aligns with the results presented in Segmented Arbitrage, reinforcing the robustness of the original findings. The availability of structured WRDS data proved to be an advantage, highlighting the importance of data accessibility in empirical research. Our project, including all scripts and documentation, is publicly available on GitHub, ensuring transparency and facilitating future extensions of this work.
+\section{Task List}
+
+\begin{itemize}
+    \item Haoshu: most .py functions for replication, latex file
+    \item Guyanyu: unit test, .ipynd files for presenting result
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+% \clearpage
+
+\section{References}
+Siriwardane E., et al.  “Segmented Arbitrage.” National Bureau of Economic Research, 2023, https://doi.org/10.3386/w30561.
+
+
+
+% \clearpage
+% \hline
+
+\end{document}
