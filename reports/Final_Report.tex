@@ -28,45 +28,90 @@
 \maketitle
 \section{Abstract}
 
-In this study, we aim to replicate the Treasury Spot-Futures arbitrage spread series presented in Figure A1d of Segmented Arbitrage Siriwardane (2023). This arbitrage spread measures the deviation between the futures-implied risk-free rate and the maturity-matched Overnight Indexed Swap (OIS) rate. By extracting and processing Treasury futures and OIS rate data, we conducted a thorough examination to validate the original findings. Our replication effort involved translating the authors' Stata code into Python, implementing a systematic data retrieval process, and automating spread computations. The full replication process, methodology, and automated script are documented in our public GitHub repository, ensuring the study remains up-to-date with newly available data.
+In this study, we aim to replicate the Treasury Spot-Futures arbitrage spread series presented in Figure A1(d) of \cite{siriwardane2023segmented}. This arbitrage spread measures the deviation between the futures-implied risk-free rate and the maturity-matched Overnight Indexed Swap (OIS) rate. By extracting and processing Treasury futures and OIS rate data, we conducted a thorough examination to validate the original findings. Our replication effort involved translating the authors' Stata code into Python, implementing a systematic data retrieval process, and automating spread computations. The full replication process, methodology, and automated script are documented in our public GitHub repository, ensuring the study remains up-to-date with newly available data.
 
 \section{Introduction}
 
-Siriwardane(2023) is a well-known paper that examines arbitrage activity in segmented financial markets, focusing on deviations from no-arbitrage pricing. While the paper explores various arbitrage spreads across multiple asset classes, for this project, we replicated the Treasury Spot-Futures arbitrage spread, referencing Figure A1d in the Appendix. Specifically, we were tasked with reconstructing the time-series of the spread, which measures the difference between the futures-implied risk-free rate and the maturity-matched Overnight Indexed Swap (OIS) rate. This involved extracting Treasury futures data, identifying the Cheapest-to-Deliver (CTD) securities, and computing arbitrage spreads following the methodology outlined in the paper’s Internet Appendix. Additionally, we extended the analysis beyond the original dataset by automating data retrieval and updating the arbitrage spread computation in Python.
+\cite{siriwardane2023segmented} is a well-known paper that examines arbitrage activity in segmented financial markets, focusing on deviations from no-arbitrage pricing. While the paper explores various arbitrage spreads across multiple asset classes, for this project, we replicated the Treasury Spot-Futures arbitrage spread, referencing Figure A1(d) in the Appendix. Specifically, we were tasked with reconstructing the time-series of the spread, which measures the difference between the futures-implied risk-free rate and the maturity-matched Overnight Indexed Swap (OIS) rate. This involved extracting Treasury futures data, identifying the Cheapest-to-Deliver (CTD) securities, and computing arbitrage spreads following the methodology outlined in the paper’s Internet Appendix. Additionally, we expanded the analysis beyond the original dataset by automating data retrieval and updating the arbitrage spread computation in Python. This paper focuses solely on the relevant figures and tables from \cite{siriwardane2023segmented} as of its publication date. The updated series, tables, and figures incorporating the most recent data are documented separately in a dedicated notebook available in the project's GitHub repository.
 
 \section{Literature Review} 
 
-The Treasury Spot-Futures arbitrage spread, which measures the difference between the futures-implied risk-free rate and the maturity-matched Overnight Indexed Swap (OIS) rate, has been extensively studied in the context of financial intermediation and market segmentation. Understanding this spread is crucial for comprehending the dynamics of arbitrage activities and the constraints faced by financial intermediaries.​
+The Treasury Spot-Futures arbitrage spread, which measures the difference between the futures-implied risk-free rate and the maturity-matched Overnight Indexed Swap (OIS) rate, has been extensively studied in the context of financial intermediation and market segmentation. Understanding this spread is crucial for comprehending the dynamics of arbitrage activities and the constraints faced by financial intermediaries.
 
 \subsection{Segmented Arbitrage}
-Siriwardane's "Segmented Arbitrage"(2023) investigates how frictions and constraints affect arbitrage activities across various financial markets, including equity, fixed income, and foreign exchange. The authors find that the average pairwise correlation between 29 arbitrage spreads is only 21 percent, suggesting that traditional intermediary asset pricing models may not fully capture the dynamics at play. They propose that two types of segmentation—funding and balance sheet—drive these arbitrage dynamics. Funding segmentation implies that certain trades rely on specific funding sources, making their arbitrage spreads sensitive to localized funding shocks. Balance sheet segmentation indicates that intermediaries specialize in certain trades, so arbitrage spreads are sensitive to idiosyncratic balance sheet shocks. ​
+
+Siriwardane's \cite{siriwardane2023segmented} investigates how frictions and constraints affect arbitrage activities across various financial markets, including equity, fixed income, and foreign exchange. The authors find that the average pairwise correlation between 29 arbitrage spreads is only 21 percent, suggesting that traditional intermediary asset pricing models may not fully capture the dynamics at play. They propose that two types of segmentation—funding and balance sheet—drive these arbitrage dynamics. Funding segmentation implies that certain trades rely on specific funding sources, making their arbitrage spreads sensitive to localized funding shocks. Balance sheet segmentation indicates that intermediaries specialize in certain trades, so arbitrage spreads are sensitive to idiosyncratic balance sheet shocks.
+
 \subsection{Treasury Cash-Futures Basis Trade}
-The Treasury cash-futures basis trade is a convergence strategy that profits from the spread between the price of Treasury futures contracts and the Treasury securities deliverable into those futures. Typically, this involves a repo-financed purchase of a Treasury security and the simultaneous sale of a corresponding Treasury futures contract. The profitability of this trade depends on the spread between the cash and futures prices being greater than the associated costs, such as financing and transaction fees. ​
+
+The Treasury cash-futures basis trade is a convergence strategy that profits from the spread between the price of Treasury futures contracts and the Treasury securities deliverable into those futures. Typically, this involves a repo-financed purchase of a Treasury security and the simultaneous sale of a corresponding Treasury futures contract. The profitability of this trade depends on the spread between the cash and futures prices being greater than the associated costs, such as financing and transaction fees.
+
 \subsection{Hedge Funds and the Treasury Cash-Futures Disconnect}
-Research by the Office of Financial Research highlights that higher dealer Treasury exposure is associated with a higher arbitrage spread in the cash-futures basis trade. This relationship underscores the impact of dealer balance sheet constraints on arbitrage opportunities. When dealers have substantial Treasury holdings, their capacity to engage in additional arbitrage activities diminishes, leading to wider spreads. ​
+Research by the Office of Financial Research highlights that higher dealer Treasury exposure is associated with a higher arbitrage spread in the cash-futures basis trade. This relationship underscores the impact of dealer balance sheet constraints on arbitrage opportunities. When dealers have substantial Treasury holdings, their capacity to engage in additional arbitrage activities diminishes, leading to wider spreads.
+
 \subsection{Cash-and-Carry Arbitrage}
-Cash-and-carry arbitrage is a market-neutral strategy that exploits pricing inefficiencies between the spot and futures markets. It involves purchasing an asset in the spot market and simultaneously selling a futures contract on the same asset. The goal is to profit from the convergence of the spot and futures prices over time. This strategy is particularly relevant in the context of Treasury spot-futures arbitrage, where traders seek to capitalize on discrepancies between the cash price of Treasury securities and their corresponding futures prices. ​
-Collectively, these studies provide a comprehensive understanding of the factors influencing Treasury spot-futures arbitrage spreads. They highlight the roles of funding constraints, balance sheet limitations, and market frictions in shaping arbitrage opportunities and the behavior of financial intermediaries.
+Cash-and-carry arbitrage is a market-neutral strategy that exploits pricing inefficiencies between the spot and futures markets. It involves purchasing an asset in the spot market and simultaneously selling a futures contract on the same asset. The goal is to profit from the convergence of the spot and futures prices over time. This strategy is particularly relevant in the context of Treasury spot-futures arbitrage, where traders seek to capitalize on discrepancies between the cash price of Treasury securities and their corresponding futures prices. Collectively, these studies provide a comprehensive understanding of the factors influencing Treasury spot-futures arbitrage spreads. They highlight the roles of funding constraints, balance sheet limitations, and market frictions in shaping arbitrage opportunities and the behavior of financial intermediaries.
 
-\section{Table 1 Replication}
-\subsection{Paper}
 
-NEED TO WORK ON
-
-\subsection{Challenges and Successes}
-
-1. WRDS vs. Bloomberg Data - Although the original methodology in Segmented Arbitrage suggests using Bloomberg data for extracting Treasury futures and Overnight Indexed Swap (OIS) rates, we were fortunate to have access to the Professor Jeremy Bejarano’s example code, which demonstrated how to obtain the necessary data using WRDS instead. This significantly streamlined our workflow, as WRDS provides structured and easily accessible datasets for academic research. Unlike Bloomberg, which requires a terminal login and manual extraction, WRDS allows for automated queries, saving us considerable time in the data retrieval process. The structured nature of WRDS data also helped in ensuring consistency across different arbitrage spread computations.
-
-2. Environment Setup Issues - During the implementation phase, Haoshu encountered persistent issues setting up the necessary Python environment on his laptop. Several required packages failed to install properly, likely due to compatibility issues with his system configuration. As a workaround, most of Haoshu’s code was developed and pushed to GitHub, while Guanyu ran the scripts locally for execution and validation. This division of work allowed the project to continue without major delays, ensuring that the replication and extension of the arbitrage spread calculations proceeded smoothly despite technical setbacks.
 
 
 \newpage
 
-\subsection{Results}
 
 %\centering
 
-NEED WORK
+\section{Figure A1(d) Replication}
+\subsection{Paper}
+
+The goal of this project was to replicate Figure A1d from \cite{siriwardane2023segmented}, which presents the Treasury Spot-Futures arbitrage spread for various Treasury maturities. This required extracting futures and cash bond data, computing the implied risk-free rates, and measuring the spread against the Overnight Indexed Swap (OIS) rate. The original paper relied on Bloomberg data, but our replication utilized WRDS, following the professor’s example, which streamlined the data extraction process.
+
+\subsection{Our Replication}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.7\linewidth]{output/treasury_spot_futures_replication.png}
+  \caption{Replication of Figure A1(d) from \textit{Segmented Arbitrage}, showing the Treasury Spot-Futures arbitrage spread for different maturities}
+  \label{fig:treasury_spot_futures_replication}
+\end{figure}
+
+
+
+
+Our replicated plot closely aligns with the original, capturing the broad trends and variations in arbitrage spreads for different Treasury maturities. The overall structure, time-series dynamics, and relative movements between the 2Y, 5Y, 10Y, 20Y, and 30Y spreads are well-matched with the published figure. Notably, we successfully replicated the key features of the time-series, including periods of heightened volatility, such as the pronounced spike in early 2014.
+
+Overall, our replication effectively captures the essence of Figure A1(d). The successful reproduction of this arbitrage spread supports the robustness of the original findings and confirms that WRDS serves as a viable alternative data source for this analysis. The full dataset, methodology, and code used in our replication are documented in our public GitHub repository, ensuring transparency and reproducibility for future research.
+
+
+\newpage
+
+
+\section{Rolling Volatility Analysis}
+\subsection{Objective}
+
+To further analyze the behavior of the Treasury Spot-Futures arbitrage spread, we computed and plotted the 30-day rolling standard deviation of the spread for different Treasury maturities. This measure of rolling volatility provides insight into periods of heightened arbitrage activity and market instability.
+
+\subsection{Findings}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.7\linewidth]{output/rolling_volatility.png}
+  \caption{30-Day Rolling Volatility of Treasury Spot-Futures Arbitrage Spread.}
+  \label{fig:rolling_volatility}
+\end{figure}
+
+
+
+Figure~\ref{fig:rolling_volatility} presents the 30-day rolling volatility of the Treasury Spot-Futures arbitrage spread across the 2Y, 5Y, 10Y, 20Y, and 30Y Treasury futures contracts. The following observations emerge:
+
+\begin{itemize}
+    \item Periods of Increased Volatility: The most significant spikes in volatility occur around 2013-2014 and 2020, aligning with known market disruptions. The 2020 spike corresponds with the COVID-19 crisis, which led to large fluctuations in Treasury markets.
+    \item Maturity-Based Differences: The 30Y Treasury futures exhibit the highest volatility spikes, especially around 2014 and 2020, suggesting that longer-duration contracts are more sensitive to market dislocations.
+    \item Relative Stability: Outside of these high-volatility periods, the arbitrage spread volatility remains relatively low, generally within a 5-15 bps range.
+\end{itemize}
+
+The rolling volatility analysis provides empirical evidence that Treasury Spot-Futures arbitrage spreads are not constant over time but instead fluctuate significantly during market stress periods. These findings are consistent with the hypothesis that arbitrageurs face capital and balance sheet constraints, limiting their ability to immediately exploit deviations from no-arbitrage pricing.
+
+
 
 
 \newpage
@@ -74,15 +119,110 @@ NEED WORK
 
 \section{Summary Statistics}
 
-NEED WORK
+\begin{table}[H]
+\centering
+\caption{Summary Statistics of Treasury Spot-Futures Arbitrage Variables}
+\label{tab:summary_statistics}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lrrrrrrrr}
+\toprule
+ & \textbf{Count} & \textbf{Mean} & \textbf{Std Dev} & \textbf{Min} & \textbf{25\%} & \textbf{50\%} & \textbf{75\%} & \textbf{Max} \\
+\midrule
+Box\_06m & 1923.00 & 36.85 & 9.01 & -0.02 & 30.51 & 35.92 & 41.14 & 87.26 \\
+Box\_12m & 1923.00 & 35.26 & 8.42 & 1.87 & 28.57 & 34.40 & 40.37 & 67.86 \\
+Box\_18m & 1923.00 & 37.85 & 10.41 & -15.89 & 30.90 & 36.99 & 43.44 & 81.74 \\
+CDS\_Bond\_HY & 1923.00 & -66.93 & 45.97 & -367.48 & -91.10 & -54.41 & -34.34 & 9.64 \\
+CDS\_Bond\_IG & 1923.00 & -23.71 & 21.27 & -248.39 & -27.72 & -18.88 & -12.18 & 5.06 \\
+CIP\_AUD & 1923.00 & -11.38 & 13.67 & -58.54 & -17.86 & -11.20 & -2.75 & 28.37 \\
+CIP\_CAD & 1923.00 & 14.33 & 11.63 & -11.27 & 5.04 & 10.79 & 22.69 & 67.89 \\
+CIP\_CHF & 1923.00 & 53.50 & 26.66 & 12.69 & 29.57 & 52.14 & 69.06 & 198.41 \\
+CIP\_EUR & 1923.00 & 38.28 & 21.65 & -0.73 & 22.62 & 36.78 & 49.41 & 150.35 \\
+CIP\_GBP & 1923.00 & 19.29 & 14.39 & 1.03 & 7.38 & 15.72 & 27.00 & 105.83 \\
+CIP\_JPY & 1923.00 & 50.00 & 26.48 & 12.36 & 31.12 & 44.78 & 64.50 & 244.97 \\
+CIP\_NZD & 1923.00 & -10.59 & 8.48 & -65.32 & -14.82 & -10.61 & -6.02 & 17.62 \\
+CIP\_SEK & 1923.00 & 30.61 & 22.60 & -13.28 & 11.18 & 27.78 & 43.05 & 140.08 \\
+Eq\_SF\_Dow & 1923.00 & 50.00 & 25.46 & -24.49 & 33.84 & 48.74 & 63.08 & 164.30 \\
+Eq\_SF\_NDAQ & 1923.00 & 42.23 & 21.31 & -16.88 & 25.21 & 43.49 & 54.39 & 123.41 \\
+Eq\_SF\_SPX & 1923.00 & 46.20 & 20.70 & -12.48 & 32.06 & 44.99 & 56.71 & 123.21 \\
+TIPS\_Treasury\_02Y & 1923.00 & 3.65 & 26.96 & -106.72 & -11.48 & 7.48 & 22.13 & 54.99 \\
+TIPS\_Treasury\_05Y & 1923.00 & 10.95 & 8.09 & -10.78 & 5.94 & 11.89 & 17.46 & 41.61 \\
+TIPS\_Treasury\_10Y & 1923.00 & 2.76 & 13.15 & -40.85 & -8.98 & 4.52 & 14.10 & 26.21 \\
+TIPS\_Treasury\_20Y & 1923.00 & 14.93 & 9.74 & -23.89 & 7.18 & 16.38 & 22.44 & 40.62 \\
+Treasury\_SF\_02Y & 1923.00 & 3.13 & 17.26 & -41.90 & -11.24 & 4.94 & 13.74 & 95.29 \\
+Treasury\_SF\_05Y & 1923.00 & 11.61 & 13.28 & -17.80 & 2.30 & 8.34 & 21.11 & 92.48 \\
+Treasury\_SF\_10Y & 1923.00 & 2.54 & 20.26 & -76.69 & -9.09 & 3.89 & 15.66 & 67.82 \\
+Treasury\_SF\_20Y & 1923.00 & -9.60 & 20.05 & -163.28 & -21.28 & -6.55 & 4.34 & 44.96 \\
+Treasury\_SF\_30Y & 1923.00 & 3.69 & 23.68 & -253.78 & -2.08 & 5.01 & 11.74 & 179.79 \\
+Treasury\_Swap\_01Y & 1923.00 & -3.64 & 8.19 & -32.45 & -9.26 & -2.95 & 2.02 & 16.58 \\
+Treasury\_Swap\_02Y & 1923.00 & -9.39 & 8.55 & -36.50 & -14.74 & -10.30 & -5.15 & 10.13 \\
+Treasury\_Swap\_03Y & 1923.00 & -12.99 & 8.21 & -38.05 & -18.70 & -12.70 & -7.90 & 5.10 \\
+Treasury\_Swap\_05Y & 1923.00 & -19.56 & 9.17 & -44.10 & -25.15 & -19.40 & -11.70 & 1.90 \\
+Treasury\_Swap\_10Y & 1923.00 & -28.04 & 11.89 & -58.80 & -35.60 & -27.00 & -18.40 & -7.50 \\
+Treasury\_Swap\_20Y & 1923.00 & -36.25 & 15.23 & -85.00 & -47.60 & -36.50 & -24.10 & -7.90 \\
+Treasury\_Swap\_30Y & 1923.00 & -55.36 & 18.85 & -105.60 & -67.42 & -53.10 & -42.60 & -23.40 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+The summary statistics in Table \ref{tab:summary_statistics} provide an overview of key variables relevant to our study on Treasury Spot-Futures arbitrage spreads. This section discusses the characteristics of these spreads and their implications for arbitrage activity in the Treasury market.
+
+\subsection{Treasury Spot-Futures Arbitrage Spreads}
+
+Treasury Spot-Futures arbitrage spreads measure deviations between the futures-implied risk-free rate and the maturity-matched Overnight Indexed Swap (OIS) rate. These deviations serve as indicators of market inefficiencies, funding constraints, and liquidity frictions.
+
+\begin{itemize}
+    \item \textbf{Treasury\_SF\_02Y:} The mean spread of 3.13 basis points, with a standard deviation of 17.26, suggests that short-term arbitrage spreads tend to be small on average but exhibit significant volatility. The maximum value of 95.29 and the minimum of -41.90 indicate substantial short-term fluctuations, likely influenced by Federal Reserve policy expectations and money market liquidity.
+
+    \item \textbf{Treasury\_SF\_05Y:} With a mean of 11.61 basis points and a standard deviation of 13.28, the 5-year spread shows a greater average deviation than the 2-year maturity, implying more persistent pricing anomalies at this horizon. The interquartile range (from 2.30 to 21.11 basis points) suggests that while deviations are generally small, extreme cases (e.g., max 92.48) can create large arbitrage opportunities.
+
+    \item \textbf{Treasury\_SF\_10Y:} The mean spread of 2.54 basis points and standard deviation of 20.26 suggest that, while the average deviation is close to zero, significant dislocations occur. The wide range, from -76.69 to 67.82 basis points, highlights periods of market stress and funding constraints.
+
+    \item \textbf{Treasury\_SF\_20Y:} A mean spread of -9.60 basis points, coupled with a standard deviation of 20.05, suggests a systematic negative deviation. This indicates that the futures-implied risk-free rate tends to understate the OIS rate for this maturity. The minimum value of -163.28 suggests large downward dislocations during stressed market conditions.
+
+    \item \textbf{Treasury\_SF\_30Y:} The mean spread of 3.69 basis points and a standard deviation of 23.68 indicate even greater variation in long-term arbitrage spreads. The extreme values, ranging from -253.78 to 179.79 basis points, suggest that factors such as liquidity constraints, hedging demand, and market segmentation play a role in shaping these spreads.
+\end{itemize}
+
+\subsection{Implications for Arbitrage Trading}
+
+The characteristics of these spreads provide valuable insights into Treasury market conditions and arbitrage dynamics:
+
+\begin{enumerate}
+    \item \textbf{Persistence of Arbitrage Opportunities:} The nonzero mean values indicate that deviations from no-arbitrage pricing are not short-lived but persist over time. This suggests that structural factors, such as dealer balance sheet constraints, impact Treasury futures pricing.
+
+    \item \textbf{Impact of Liquidity Constraints:} The large standard deviations and extreme values suggest that Treasury Spot-Futures arbitrage spreads widen significantly during periods of stress. For example, the 20Y and 30Y maturities exhibit some of the largest deviations, aligning with the hypothesis that longer-duration trades are more constrained due to funding and capital limitations.
+
+    \item \textbf{Time Variation in Arbitrage Spreads:} The fluctuations in these spreads highlight the dynamic nature of Treasury markets. The 2Y and 5Y maturities exhibit smaller but volatile spreads, likely reflecting short-term rate expectations, whereas the 10Y, 20Y, and 30Y spreads show deeper mispricings, potentially due to term premium shifts and dealer constraints.
+
+    \item \textbf{Relation to Market Events:} The maximum and minimum values suggest that Treasury Spot-Futures arbitrage opportunities fluctuate significantly with macroeconomic conditions, such as Federal Reserve policy announcements, liquidity crises, and risk-off episodes.
+\end{enumerate}
+
+\subsection{Relevance to Treasury Arbitrage}
+
+The observed deviations align with findings from \cite{siriwardane2023segmented}, which suggest that balance sheet constraints and funding segmentation drive mispricings in arbitrage spreads. The data shows that these spreads are not purely transitory but exhibit persistent dislocations, especially at longer maturities where market depth is lower.
+
+These findings reinforce the argument that risk-free arbitrage opportunities in Treasury markets are constrained by institutional and macroeconomic factors, necessitating a deeper analysis of their determinants. In the next section, we further explore the economic drivers behind these arbitrage spreads.
 
 
 
 
+\newpage
 
 
-\section{Summary}
-This study aimed to replicate the findings of Segmented Arbitrage (Siriwardane 2023), specifically focusing on the Treasury Spot-Futures arbitrage spread presented in Figure A1d. By following the methodology outlined in the paper’s Internet Appendix, we successfully replicated the spread series and ensured accuracy in our calculations. Unlike the original study, which suggested using Bloomberg data, we were fortunate to have access to a professor-provided example that utilized WRDS for data extraction. This significantly streamlined our workflow by allowing us to automate the data retrieval process rather than relying on manual Bloomberg extractions.
+
+
+\section{Challenges and Successes}
+
+1. WRDS vs. Bloomberg Data - Although the original methodology in Segmented Arbitrage suggests using Bloomberg data for extracting Treasury futures and Overnight Indexed Swap (OIS) rates, we were fortunate to have access to the Professor Jeremy Bejarano’s example code, which demonstrated how to obtain the necessary data using WRDS instead. This significantly streamlined our workflow, as WRDS provides structured and easily accessible datasets for academic research. Unlike Bloomberg, which requires a terminal login and manual extraction, WRDS allows for automated queries, saving us considerable time in the data retrieval process. The structured nature of WRDS data also helped in ensuring consistency across different arbitrage spread computations. \\
+
+
+2. Environment Setup Issues - During the implementation phase, Haoshu encountered persistent issues setting up the necessary Python environment on his laptop. Several required packages failed to install properly, likely due to compatibility issues with his system configuration. As a workaround, most of Haoshu’s code was developed and pushed to GitHub, while Guanyu ran the scripts locally for execution and validation. This division of work allowed the project to continue without major delays, ensuring that the replication and extension of the arbitrage spread calculations proceeded smoothly despite technical setbacks.
+
+
+
+
+\section{Conclusion}
+This study aimed to replicate the findings of \cite{siriwardane2023segmented}, specifically focusing on the Treasury Spot-Futures arbitrage spread presented in Figure A1(d). By following the methodology outlined in the paper’s Internet Appendix, we successfully replicated the spread series and ensured accuracy in our calculations. Unlike the original study, which suggested using Bloomberg data, we were fortunate to have access to a professor-provided example that utilized WRDS for data extraction. This significantly streamlined our workflow by allowing us to automate the data retrieval process rather than relying on manual Bloomberg extractions.
 Despite our success in replication, we encountered challenges related to the coding environment. Haoshu experienced persistent issues in setting up the necessary Python environment on his laptop, as certain package installations repeatedly failed. We successfully overcame this by Haoshu writing and pushing the code to GitHub, while Guanyu executed and tested the scripts locally. This collaborative approach ensured that the project continued without major delays, ultimately allowing us to achieve a high-fidelity replication.
 Overall, our replication effort closely aligns with the results presented in Segmented Arbitrage, reinforcing the robustness of the original findings. The availability of structured WRDS data proved to be an advantage, highlighting the importance of data accessibility in empirical research. Our project, including all scripts and documentation, is publicly available on GitHub, ensuring transparency and facilitating future extensions of this work.
 \section{Task List}
@@ -104,9 +244,12 @@ Overall, our replication effort closely aligns with the results presented in Seg
 
 % \clearpage
 
-\section{References}
-Siriwardane E., et al.  “Segmented Arbitrage.” National Bureau of Economic Research, 2023, https://doi.org/10.3386/w30561.
+\clearpage
+\bibliographystyle{apalike} 
+\bibliography{bibliography}
 
+
+% \clearpage
 
 
 % \clearpage
