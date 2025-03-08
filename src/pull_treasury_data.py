@@ -36,7 +36,8 @@ from settings import config
 
 # Define data directory and username from environment settings
 DATA_DIR = Path(config("DATA_DIR"))
-WRDS_USERNAME = config("WRDS_USERNAME")
+WRDS_USERNAME = config("WRDS_USERNAME", default="guanyuc", cast=str)
+
 
 
 def pull_CRSP_treasury_daily(

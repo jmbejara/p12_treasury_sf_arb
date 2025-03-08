@@ -34,6 +34,10 @@ from platform import system
 from pandas import to_datetime
 from decouple import config as _config
 
+from decouple import Config, AutoConfig
+
+config = AutoConfig() 
+
 def get_os():
     """
     Detect the operating system in use. Returns 'windows' if Windows,
