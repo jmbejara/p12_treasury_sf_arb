@@ -67,8 +67,7 @@ def test_calc_runness():
 
 def test_demo_output(capsys):
     # _demo prints info on the data; we capture the output.
-    df = pull_treasury_data._demo()
+    df = pull_treasury_data._demo()   # no TypeError now
     captured = capsys.readouterr().out
-    # Check that some expected text (like info() output) is present.
-    assert "RangeIndex" in captured or "DatetimeIndex" in captured, "Demo output should include index info."
-    assert isinstance(df, pd.DataFrame), "_demo() should return a DataFrame."
+    assert "RangeIndex" in captured or "DatetimeIndex" in captured
+    assert isinstance(df, pd.DataFrame)

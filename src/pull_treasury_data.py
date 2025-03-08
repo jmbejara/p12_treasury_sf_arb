@@ -206,15 +206,17 @@ def _demo():
     Simple demonstration of data pulling, merging, and runness calculation.
     """
     # Obtain daily data
-    df = pull_CRSP_treasury_daily(data_dir=DATA_DIR)
+    df = pull_CRSP_treasury_daily(start_date="1970-01-01",
+    end_date="2023-12-31",
+    wrds_username=WRDS_USERNAME)
     df.info()
 
     # Obtain issue information
-    df = pull_CRSP_treasury_info(data_dir=DATA_DIR)
+    df = pull_CRSP_treasury_info(wrds_username=WRDS_USERNAME)
     df.info()
 
     # Create consolidated dataset
-    df = pull_CRSP_treasury_consolidated(data_dir=DATA_DIR)
+    df = pull_CRSP_treasury_consolidated(wrds_username=WRDS_USERNAME)
     df.info()
 
     # Compute runness and show data summary
