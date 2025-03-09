@@ -5,7 +5,7 @@ import numpy as np
 from pathlib import Path
 from settings import config
 
-DATA_DIR = Path(config("DATA_DIR"))
+DATA_DIR = config("DATA_DIR")
 START_DATE = config("START_DATE")
 END_DATE = config("END_DATE")
 
