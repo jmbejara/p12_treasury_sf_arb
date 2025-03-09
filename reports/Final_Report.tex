@@ -63,7 +63,7 @@ Cash-and-carry arbitrage is a market-neutral strategy that exploits pricing inef
 \section{Figure A1(d) Replication}
 \subsection{Paper}
 
-The goal of this project was to replicate Figure A1d from \cite{siriwardane2023segmented}, which presents the Treasury Spot-Futures arbitrage spread for various Treasury maturities. This required extracting futures and cash bond data, computing the implied risk-free rates, and measuring the spread against the Overnight Indexed Swap (OIS) rate. The original paper relied on Bloomberg data, but our replication utilized WRDS, following the professor’s example, which streamlined the data extraction process.
+The goal of this project was to replicate Figure A1(d) from \cite{siriwardane2023segmented}, which presents the Treasury Spot-Futures arbitrage spread for various Treasury maturities. This required extracting futures and cash bond data, computing the implied risk-free rates, and measuring the spread against the Overnight Indexed Swap (OIS) rate. The original paper relied on Bloomberg data, and we also followed their Bloomberg data approach. However, instead of using STATA for data cleaning as in the original paper, we implemented the cleaning process in Python.
 
 \subsection{Our Replication}
 
@@ -79,7 +79,7 @@ The goal of this project was to replicate Figure A1d from \cite{siriwardane2023s
 
 Our replicated plot closely aligns with the original, capturing the broad trends and variations in arbitrage spreads for different Treasury maturities. The overall structure, time-series dynamics, and relative movements between the 2Y, 5Y, 10Y, 20Y, and 30Y spreads are well-matched with the published figure. Notably, we successfully replicated the key features of the time-series, including periods of heightened volatility, such as the pronounced spike in early 2014.
 
-Overall, our replication effectively captures the essence of Figure A1(d). The successful reproduction of this arbitrage spread supports the robustness of the original findings and confirms that WRDS serves as a viable alternative data source for this analysis. The full dataset, methodology, and code used in our replication are documented in our public GitHub repository, ensuring transparency and reproducibility for future research.
+Overall, our replication effectively captures the essence of Figure A1(d). The successful reproduction of this arbitrage spread supports the robustness of the original findings. The full dataset, methodology, and code used in our replication are documented in our public GitHub repository, ensuring transparency and reproducibility for future research.
 
 
 \newpage
@@ -213,7 +213,7 @@ These findings reinforce the argument that risk-free arbitrage opportunities in 
 
 \section{Challenges and Successes}
 
-1. WRDS vs. Bloomberg Data - Although the original methodology in Segmented Arbitrage suggests using Bloomberg data for extracting Treasury futures and Overnight Indexed Swap (OIS) rates, we were fortunate to have access to the Professor Jeremy Bejarano’s example code, which demonstrated how to obtain the necessary data using WRDS instead. This significantly streamlined our workflow, as WRDS provides structured and easily accessible datasets for academic research. Unlike Bloomberg, which requires a terminal login and manual extraction, WRDS allows for automated queries, saving us considerable time in the data retrieval process. The structured nature of WRDS data also helped in ensuring consistency across different arbitrage spread computations. \\
+1. Data Extraction and Cleaning Methodology - Originally, we considered simply following Professor Jeremy Bejarano’s example using WRDS for data extraction. However, we realized that to better align with the original paper’s methodology, we needed to engage more deeply in the data cleaning process. As a result, we revisited the STATA-based approach used in the original paper and implemented our data cleaning procedures in Python, ensuring consistency with their methodology while leveraging the flexibility and efficiency of Python. \\
 
 
 2. Environment Setup Issues - During the implementation phase, Haoshu encountered persistent issues setting up the necessary Python environment on his laptop. Several required packages failed to install properly, likely due to compatibility issues with his system configuration. As a workaround, most of Haoshu’s code was developed and pushed to GitHub, while Guanyu ran the scripts locally for execution and validation. This division of work allowed the project to continue without major delays, ensuring that the replication and extension of the arbitrage spread calculations proceeded smoothly despite technical setbacks.
@@ -222,9 +222,12 @@ These findings reinforce the argument that risk-free arbitrage opportunities in 
 
 
 \section{Conclusion}
-This study aimed to replicate the findings of \cite{siriwardane2023segmented}, specifically focusing on the Treasury Spot-Futures arbitrage spread presented in Figure A1(d). By following the methodology outlined in the paper’s Internet Appendix, we successfully replicated the spread series and ensured accuracy in our calculations. Unlike the original study, which suggested using Bloomberg data, we were fortunate to have access to a professor-provided example that utilized WRDS for data extraction. This significantly streamlined our workflow by allowing us to automate the data retrieval process rather than relying on manual Bloomberg extractions.
+This study aimed to replicate the findings of \cite{siriwardane2023segmented}, specifically focusing on the Treasury Spot-Futures arbitrage spread presented in Figure A1(d). By following the methodology outlined in the paper’s Internet Appendix, we successfully replicated the spread series and ensured accuracy in our calculations. Initially, we considered following the professor-provided example, which utilized WRDS for data extraction, as it streamlined the workflow through automated retrieval. However, to better align with the original study’s methodology, which relied on Bloomberg data, we revisited their approach. We extracted the data from Bloomberg and implemented the data cleaning process in Python, following the original paper’s STATA-based methodology.
+
 Despite our success in replication, we encountered challenges related to the coding environment. Haoshu experienced persistent issues in setting up the necessary Python environment on his laptop, as certain package installations repeatedly failed. We successfully overcame this by Haoshu writing and pushing the code to GitHub, while Guanyu executed and tested the scripts locally. This collaborative approach ensured that the project continued without major delays, ultimately allowing us to achieve a high-fidelity replication.
-Overall, our replication effort closely aligns with the results presented in Segmented Arbitrage, reinforcing the robustness of the original findings. The availability of structured WRDS data proved to be an advantage, highlighting the importance of data accessibility in empirical research. Our project, including all scripts and documentation, is publicly available on GitHub, ensuring transparency and facilitating future extensions of this work.
+
+Overall, our replication effort closely aligns with the results presented in Segmented Arbitrage, reinforcing the robustness of the original findings. While the availability of structured WRDS data initially provided an advantage in streamlining data retrieval, we ultimately incorporated Bloomberg data to better match the original methodology. This experience underscores the importance of both data accessibility and methodological consistency in empirical research. To ensure transparency and support future research extensions, we have made all scripts and documentation publicly available on GitHub.
+
 \section{Task List}
 
 \begin{itemize}
@@ -245,7 +248,7 @@ Overall, our replication effort closely aligns with the results presented in Seg
 % \clearpage
 
 \clearpage
-\bibliographystyle{apalike} 
+\bibliographystyle{apalike}
 \bibliography{bibliography}
 
 
