@@ -5,7 +5,7 @@ from pathlib import Path
 import pull_treasury_data  # your module
 from settings import config
 
-DATA_DIR = Path(config("DATA_DIR"))
+DATA_DIR = config("DATA_DIR")
 
 # --- Tests for load functions (using local parquet files) ---
 
