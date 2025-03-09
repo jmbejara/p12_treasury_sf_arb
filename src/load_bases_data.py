@@ -40,30 +40,7 @@ DATA_DIR = config("DATA_DIR")
 ###############################################################################
 
 
-def read_usdjpyfxswap(dirpath=DATA_DIR):
-    """
-    Load the manually compiled USD-JPY FX swap basis. Two columns in the file:
-    - 'fxbasisONjpy' from Wenxin's data
-    - 'fxswaprate_LA' used as an extension whenever Wenxin's data is not available.
-    
-    Returns:
-    --------
-    fxswap : DataFrame
-        Full set of columns from the original Excel.
-    basis : Series
-        The final JPY swap basis in decimal form (e.g., 0.01 = 1%).
-    """
-    filename = "fwswaprate_data.xlsx"
-    dirpath = Path(dirpath)
-    fxswap = pd.read_excel(dirpath / filename, skiprows=[0, 1, 2]).set_index("date")
 
-    # Merge the two series, using the LA measure when Wenxin's measure is missing
-    basis = fxswap["fxbasisONjpy"].copy()
-    missing_idx = basis.isna()
-    basis[missing_idx] = fxswap.loc[missing_idx, "fxswaprate_LA"]
-    basis = basis.dropna()
-    basis = basis / 100  # Convert from percent to decimal
-    return fxswap, basis
 
 
 def read_treasury_cash_futures_bases(dirpath=DATA_DIR):

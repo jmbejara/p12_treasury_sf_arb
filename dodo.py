@@ -105,27 +105,71 @@ def task_config():
     }
 
 
-# Example of how you'd define a data pull task (commented out):
-# def task_pull_WRDS_data():
-#     """
-#     Example of a data pulling task from WRDS (currently commented out).
-#     This should pull CRSP treasury data and save it in parquet files.
-#     """
-#     file_dep = ["./src/pull_CRSP_treasury.py"]
-#     file_output = [
-#         "TFZ_DAILY.parquet",
-#         "TFZ_INFO.parquet",
-#         "TFZ_consolidated.parquet",
-#         "TFZ_with_runness.parquet",
-#     ]
-#     targets = [DATA_DIR / file for file in file_output]
-#
-#     return {
-#         "actions": ["ipython ./src/pull_CRSP_treasury.py"],
-#         "targets": targets,
-#         "file_dep": file_dep,
-#         "clean": True,
-#     }
+
+def task_pull_fed_yield_curve():
+    """
+    Example of a data pulling task from WRDS (currently commented out).
+    This should pull CRSP treasury data and save it in parquet files.
+    """
+    file_dep = ["./src/pull_fed_yield_curve.py"]
+    file_output = [
+        "fed_yield_curve_all.parquet",
+        "fed_yield_curve.parquet",
+    ]
+    targets = [DATA_DIR / file for file in file_output]
+
+    return {
+        "actions": ["ipython ./src/pull_fed_yield_curve.py"],
+        "targets": targets,
+        "file_dep": file_dep,
+        "clean": True,
+    }
+
+def task_pull_treasury_data():
+    """
+    Example of a data pulling task from WRDS (currently commented out).
+    This should pull CRSP treasury data and save it in parquet files.
+    """
+    file_dep = ["./src/pull_treasury_data.py"]
+    file_output = [
+        "TFZ_DAILY.parquet",
+        "TFZ_INFO.parquet",
+        "TFZ_consolidated.parquet",
+        "TFZ_with_runness.parquet",
+    ]
+    targets = [DATA_DIR / file for file in file_output]
+
+    return {
+        "actions": ["ipython ./src/pull_treasury_data.py"],
+        "targets": targets,
+        "file_dep": file_dep,
+        "clean": True,
+    }
+
+# if __name__ == "__main__":
+#     # 1) Pull daily quotes
+#     df = pull_CRSP_treasury_daily(
+#         start_date="1970-01-01",
+#         end_date="2023-12-31",
+#         wrds_username=WRDS_USERNAME,
+#     )
+#     path = DATA_DIR / "TFZ_DAILY.parquet"
+#     df.to_parquet(path)
+
+#     # 2) Pull issue metadata
+#     df = pull_CRSP_treasury_info(wrds_username=WRDS_USERNAME)
+#     path = DATA_DIR / "TFZ_INFO.parquet"
+#     df.to_parquet(path)
+
+#     # 3) Pull and merge quotes + metadata
+#     df = pull_CRSP_treasury_consolidated(wrds_username=WRDS_USERNAME)
+#     path = DATA_DIR / "TFZ_consolidated.parquet"
+#     df.to_parquet(path)
+
+#     # 4) Runness calculation
+#     df = calc_runness(df)
+#     path = DATA_DIR / "TFZ_with_runness.parquet"
+#     df.to_parquet(path)
 
 
 ############################################
