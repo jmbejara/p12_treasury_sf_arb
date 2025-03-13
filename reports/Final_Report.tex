@@ -213,10 +213,14 @@ These findings reinforce the argument that risk-free arbitrage opportunities in 
 
 \section{Challenges and Successes}
 
-1. Data Extraction and Cleaning Methodology - Originally, we considered simply following Professor Jeremy Bejarano’s example using WRDS for data extraction. However, we realized that to better align with the original paper’s methodology, we needed to engage more deeply in the data cleaning process. As a result, we revisited the STATA-based approach used in the original paper and implemented our data cleaning procedures in Python, ensuring consistency with their methodology while leveraging the flexibility and efficiency of Python. \\
+
+1. Environment Setup Issues - During the implementation phase, Haoshu encountered persistent issues setting up the necessary Python environment on his laptop. Several required packages failed to install properly, likely due to compatibility issues with his system configuration. As a workaround, most of Haoshu’s code was developed and pushed to GitHub, while Guanyu ran the scripts locally for execution and validation. This division of work allowed the project to continue without major delays, ensuring that the replication and extension of the arbitrage spread calculations proceeded smoothly despite technical setbacks. \\
 
 
-2. Environment Setup Issues - During the implementation phase, Haoshu encountered persistent issues setting up the necessary Python environment on his laptop. Several required packages failed to install properly, likely due to compatibility issues with his system configuration. As a workaround, most of Haoshu’s code was developed and pushed to GitHub, while Guanyu ran the scripts locally for execution and validation. This division of work allowed the project to continue without major delays, ensuring that the replication and extension of the arbitrage spread calculations proceeded smoothly despite technical setbacks.
+2. Data Extraction and Cleaning Methodology - Originally, we considered simply following Professor Jeremy Bejarano’s example using WRDS for data extraction. However, we realized that to better align with the original paper’s methodology, we needed to engage more deeply in the data cleaning process. As a result, we revisited the STATA-based approach used in the original paper and implemented our data cleaning procedures in Python, ensuring consistency with their methodology while leveraging the flexibility and efficiency of Python. \\
+
+3. Challenges in Accessing Bloomberg Terminal - We attempted to retrieve the most up-to-date data for our project by using multiple computers in the FinMath building. Initially, we explored installing xbbg and other Python packages to automate the data extraction process. However, most of the computers lacked sufficient memory, and clearing it required an admin key that we did not have access to. We then attempted to manually extract data using Bloomberg Excel add-ins, but many of the terminals had already reached their data pull limits, preventing us from obtaining the necessary updates. As a result, we ultimately had to rely on the dataset provided by the professor via Google Drive.
+
 
 
 
@@ -231,8 +235,8 @@ Overall, our replication effort closely aligns with the results presented in Seg
 \section{Task List}
 
 \begin{itemize}
-    \item Haoshu: most .py functions for replication, latex file
-    \item Guyanyu: unit test, .ipynd files for presenting result
+    \item Haoshu: most .py functions for replication, latex file, creation of additional figure or tables
+    \item Guyanyu: data cleaning process, unit test, .ipynd files for presenting result, doit file
 \end{itemize}
 
 
