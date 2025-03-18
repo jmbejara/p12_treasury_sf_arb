@@ -1,37 +1,30 @@
-# test_load_bases_data.py
 import pytest
 import pandas as pd
-from pathlib import Path
+from load_bases_data import load_combined_spreads_wide
 
-import load_bases_data
-from settings import config
+# Reference data URL (same as used in function)
+REFERENCE_URL = "https://www.dropbox.com/scl/fi/81jm3dbe856i7p17rjy87/arbitrage_spread_wide.dta?rlkey=ke78u464vucmn43zt27nzkxya&st=59g2n7dt&dl=1"
 
-# Use the local data directory from config
-DATA_DIR = Path(config("DATA_DIR"))
+@pytest.fixture
+def df_loaded():
+    """Load the dataset using the function."""
+    return load_combined_spreads_wide()
 
-def test_read_usdjpyfxswap():
-    """
-    Test that read_usdjpyfxswap can read the real 'fwswaprate_data.xlsx' in DATA_DIR.
-    If the file doesn't exist, the test fails with a FileNotFoundError (no skip).
-    """
-    file_path = DATA_DIR / "fwswaprate_data.xlsx"
-    # Attempt to read; if missing, you'll see an error instead of skipping
-    fxswap, basis = load_bases_data.read_usdjpyfxswap(DATA_DIR)
+def test_dataset_load(df_loaded):
+    """Ensure the dataset loads successfully."""
+    assert not df_loaded.empty, "Dataset failed to load!"
+    assert df_loaded.shape[0] > 0, "Dataset has no rows!"
+    assert df_loaded.shape[1] > 0, "Dataset has no columns!"
 
-    assert isinstance(fxswap, pd.DataFrame), "fxswap must be a DataFrame"
-    assert isinstance(basis, pd.Series), "basis must be a Series"
-    assert "fxbasisONjpy" in fxswap.columns, "Column 'fxbasisONjpy' not found"
-    assert "fxswaprate_LA" in fxswap.columns, "Column 'fxswaprate_LA' not found"
-    assert not basis.empty, "Basis Series is unexpectedly empty"
+def test_index_is_date(df_loaded):
+    """Ensure the index is correctly set to 'date'."""
+    assert df_loaded.index.name == "date", "Index is not set to 'date'!"
+    assert isinstance(df_loaded.index, pd.DatetimeIndex), "Index is not a DatetimeIndex!"
 
-def test_read_treasury_cash_futures_bases():
-    """
-    Test that read_treasury_cash_futures_bases reads the real 'irr_panel_b.csv' in DATA_DIR.
-    If the file doesn't exist or is invalid, the test fails outright.
-    """
-    file_path = DATA_DIR / "irr_panel_b.csv"
-    df = load_bases_data.read_treasury_cash_futures_bases(DATA_DIR)
+def test_expected_columns_exist(df_loaded):
+    """Ensure some key expected columns exish."""
+    expected_columns = {"Treasury_SF_02Y", "Treasury_SF_05Y", "Treasury_SF_10Y"}
+    assert expected_columns.issubset(df_loaded.columns), f"Missing columns: {expected_columns - set(df_loaded.columns)}"
 
-    assert isinstance(df, pd.DataFrame), "Expected a DataFrame"
-    assert "PL" not in df.columns, "Expected 'PL' column to be dropped"
-    assert not df.empty, "DataFrame is unexpectedly empty"
+if __name__ == "__main__":
+    pytest.main()

@@ -20,6 +20,24 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
+import sys
+import os
+
+# Ensure 'src' is in sys.path
+sys.path.append(os.path.abspath("./src"))  # Add 'src' to the path
+
+# Now import config from settings.py
+from settings import config  # <- FIXED
+
+# Set data directory
+DATA_DIR = config("DATA_DIR")
+MANUAL_DATA_DIR = config("MANUAL_DATA_DIR")
+OUTPUT_DIR = config("OUTPUT_DIR")
+
+
+
+
+
 
 # -------------------------
 # Helper functions
@@ -80,11 +98,22 @@ def rolling_outlier_flag(df, group_col, date_col, value_col, window_days=45, thr
 
 def calc_treasury():
     # Load intermediate data
-    intermediate_file = os.path.join("intermediate", "treasury_intermediate.pkl")
-    data = pd.read_pickle(intermediate_file)
-    df = data["treasury_df"]
-    df_ois = data["ois_df"]
-    last_day_df = data["last_day_df"]
+    data_dir = DATA_DIR
+
+    # Load the required CSV files from _data
+    treasury_file = os.path.join(data_dir, "treasury_df.csv")
+    ois_file = os.path.join(data_dir, "ois_df.csv")
+    last_day_file = os.path.join(data_dir, "last_day_df.csv")
+
+    # Read the datasets
+    df = pd.read_csv(treasury_file)
+    df_ois = pd.read_csv(ois_file)
+    last_day_df = pd.read_csv(last_day_file)
+
+    # Convert date columns to datetime format
+    df["Date"] = pd.to_datetime(df["Date"])
+    df_ois["Date"] = pd.to_datetime(df_ois["Date"])
+    last_day_df["Date"] = pd.to_datetime(last_day_df["Date"])
 
     # -------------------------
     # Reshape from wide to long format
@@ -128,11 +157,14 @@ def calc_treasury():
                       inplace=True, errors='ignore')
     
     # -------------------------
-    # Merge with USD OIS Rates on Date
-    df_ois['date'] = pd.to_datetime(df_ois['date'])
-    df_long = df_long.merge(df_ois, left_on="Date", right_on="date", how="left")
-    df_long.drop(columns=["date"], inplace=True)
     
+    # Merge with USD OIS Rates on Date
+    df_ois['Date'] = pd.to_datetime(df_ois['Date'])
+    df_long = df_long.merge(df_ois, left_on="Date", right_on="Date", how="left")
+    # df_long.drop(columns=["Date"], inplace=True)
+    
+
+
     # -------------------------
     # Interpolate OIS rates for contracts v=1 and v=2
     for v in [1, 2]:
@@ -163,7 +195,7 @@ def calc_treasury():
     
     # -------------------------
     # Plot arbitrage spread for selected tenors.
-    output_dir = "output"
+    output_dir = OUTPUT_DIR 
     os.makedirs(output_dir, exist_ok=True)
     for tenor in [2, 5, 10, 20, 30]:
         df_plot = df_long[df_long["Tenor"] == str(tenor)]
@@ -213,10 +245,24 @@ def calc_treasury():
         "rf_ois_t_sf_mat_30": "tfut_30_ois"
     }
     df_wide.rename(columns=rename_dict, inplace=True)
+
+    df_wide["Treasury_SF_2Y"] = df_wide["tfut_2_rf"] - df_wide["tfut_2_ois"]
+    df_wide["Treasury_SF_5Y"] = df_wide["tfut_5_rf"] - df_wide["tfut_5_ois"]
+    df_wide["Treasury_SF_10Y"] = df_wide["tfut_10_rf"] - df_wide["tfut_10_ois"]
+    df_wide["Treasury_SF_20Y"] = df_wide["tfut_20_rf"] - df_wide["tfut_20_ois"]
+    df_wide["Treasury_SF_30Y"] = df_wide["tfut_30_rf"] - df_wide["tfut_30_ois"]
+    # Select relevant columns
+    df_out = df_wide[["Date", "Treasury_SF_2Y", "Treasury_SF_5Y", "Treasury_SF_10Y", "Treasury_SF_20Y", "Treasury_SF_30Y"]].copy()
+    df_out.fillna(method='ffill', inplace=True)
+
     
     # Save final output as Stata .dta file (or CSV if preferred)
-    output_file = os.path.join(output_dir, "treasury_sf_implied_rf.dta")
-    df_wide.to_stata(output_file, write_index=False)
+    output_file = os.path.join(DATA_DIR, "treasury_sf_output.csv")
+    df_out.to_csv(output_file, index=False)
+
+
+
+
     print(f"Final output saved to {output_file}")
     
 if __name__ == '__main__':
