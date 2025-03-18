@@ -128,7 +128,7 @@ def task_test_load_bases_data():
     }
 
 
-def task_latex_to_pdf():
+def task_latex_to_document():
     return {
         'actions': ['python src/latex_to_document.py reports/Final_Report.tex'],
         'file_dep': ['src/latex_to_document.py', 'reports/Final_Report.tex'],
