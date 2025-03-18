@@ -77,7 +77,7 @@ The goal of this project was to replicate Figure A1(d) from \cite{siriwardane202
 
 
 
-Our replicated plot closely aligns with the original, capturing the broad trends and variations in arbitrage spreads for different Treasury maturities. The overall structure, time-series dynamics, and relative movements between the 2Y, 5Y, 10Y, 20Y, and 30Y spreads are well-matched with the published figure. Notably, we successfully replicated the key features of the time-series, including periods of heightened volatility, such as the pronounced spike in early 2014.
+While there were slight differences in our data compared with the original's, our replicated plot mostly aligns with the original's shape, capturing the broad trends and variations in arbitrage spreads for different Treasury maturities. The overall structure, time-series dynamics, and relative movements between the 2Y, 5Y, 10Y, 20Y, and 30Y spreads are well-matched with the published figure. Notably, we successfully replicated the key features of the time-series, including periods of heightened volatility, such as the pronounced spike in early 2014.
 
 Overall, our replication effectively captures the essence of Figure A1(d). The successful reproduction of this arbitrage spread supports the robustness of the original findings. The full dataset, methodology, and code used in our replication are documented in our public GitHub repository, ensuring transparency and reproducibility for future research.
 
@@ -119,69 +119,38 @@ The rolling volatility analysis provides empirical evidence that Treasury Spot-F
 
 \section{Summary Statistics}
 
-\begin{table}[H]
-\centering
+
+\begin{table}
 \caption{Summary Statistics of Treasury Spot-Futures Arbitrage Variables}
-\label{tab:summary_statistics}
-\begin{adjustbox}{max width=\textwidth}
+\label{tab:summary_output}
 \begin{tabular}{lrrrrrrrr}
 \toprule
- & \textbf{Count} & \textbf{Mean} & \textbf{Std Dev} & \textbf{Min} & \textbf{25\%} & \textbf{50\%} & \textbf{75\%} & \textbf{Max} \\
+ & count & mean & std & min & 25\% & 50\% & 75\% & max \\
 \midrule
-Box\_06m & 1923.00 & 36.85 & 9.01 & -0.02 & 30.51 & 35.92 & 41.14 & 87.26 \\
-Box\_12m & 1923.00 & 35.26 & 8.42 & 1.87 & 28.57 & 34.40 & 40.37 & 67.86 \\
-Box\_18m & 1923.00 & 37.85 & 10.41 & -15.89 & 30.90 & 36.99 & 43.44 & 81.74 \\
-CDS\_Bond\_HY & 1923.00 & -66.93 & 45.97 & -367.48 & -91.10 & -54.41 & -34.34 & 9.64 \\
-CDS\_Bond\_IG & 1923.00 & -23.71 & 21.27 & -248.39 & -27.72 & -18.88 & -12.18 & 5.06 \\
-CIP\_AUD & 1923.00 & -11.38 & 13.67 & -58.54 & -17.86 & -11.20 & -2.75 & 28.37 \\
-CIP\_CAD & 1923.00 & 14.33 & 11.63 & -11.27 & 5.04 & 10.79 & 22.69 & 67.89 \\
-CIP\_CHF & 1923.00 & 53.50 & 26.66 & 12.69 & 29.57 & 52.14 & 69.06 & 198.41 \\
-CIP\_EUR & 1923.00 & 38.28 & 21.65 & -0.73 & 22.62 & 36.78 & 49.41 & 150.35 \\
-CIP\_GBP & 1923.00 & 19.29 & 14.39 & 1.03 & 7.38 & 15.72 & 27.00 & 105.83 \\
-CIP\_JPY & 1923.00 & 50.00 & 26.48 & 12.36 & 31.12 & 44.78 & 64.50 & 244.97 \\
-CIP\_NZD & 1923.00 & -10.59 & 8.48 & -65.32 & -14.82 & -10.61 & -6.02 & 17.62 \\
-CIP\_SEK & 1923.00 & 30.61 & 22.60 & -13.28 & 11.18 & 27.78 & 43.05 & 140.08 \\
-Eq\_SF\_Dow & 1923.00 & 50.00 & 25.46 & -24.49 & 33.84 & 48.74 & 63.08 & 164.30 \\
-Eq\_SF\_NDAQ & 1923.00 & 42.23 & 21.31 & -16.88 & 25.21 & 43.49 & 54.39 & 123.41 \\
-Eq\_SF\_SPX & 1923.00 & 46.20 & 20.70 & -12.48 & 32.06 & 44.99 & 56.71 & 123.21 \\
-TIPS\_Treasury\_02Y & 1923.00 & 3.65 & 26.96 & -106.72 & -11.48 & 7.48 & 22.13 & 54.99 \\
-TIPS\_Treasury\_05Y & 1923.00 & 10.95 & 8.09 & -10.78 & 5.94 & 11.89 & 17.46 & 41.61 \\
-TIPS\_Treasury\_10Y & 1923.00 & 2.76 & 13.15 & -40.85 & -8.98 & 4.52 & 14.10 & 26.21 \\
-TIPS\_Treasury\_20Y & 1923.00 & 14.93 & 9.74 & -23.89 & 7.18 & 16.38 & 22.44 & 40.62 \\
-Treasury\_SF\_02Y & 1923.00 & 3.13 & 17.26 & -41.90 & -11.24 & 4.94 & 13.74 & 95.29 \\
-Treasury\_SF\_05Y & 1923.00 & 11.61 & 13.28 & -17.80 & 2.30 & 8.34 & 21.11 & 92.48 \\
-Treasury\_SF\_10Y & 1923.00 & 2.54 & 20.26 & -76.69 & -9.09 & 3.89 & 15.66 & 67.82 \\
-Treasury\_SF\_20Y & 1923.00 & -9.60 & 20.05 & -163.28 & -21.28 & -6.55 & 4.34 & 44.96 \\
-Treasury\_SF\_30Y & 1923.00 & 3.69 & 23.68 & -253.78 & -2.08 & 5.01 & 11.74 & 179.79 \\
-Treasury\_Swap\_01Y & 1923.00 & -3.64 & 8.19 & -32.45 & -9.26 & -2.95 & 2.02 & 16.58 \\
-Treasury\_Swap\_02Y & 1923.00 & -9.39 & 8.55 & -36.50 & -14.74 & -10.30 & -5.15 & 10.13 \\
-Treasury\_Swap\_03Y & 1923.00 & -12.99 & 8.21 & -38.05 & -18.70 & -12.70 & -7.90 & 5.10 \\
-Treasury\_Swap\_05Y & 1923.00 & -19.56 & 9.17 & -44.10 & -25.15 & -19.40 & -11.70 & 1.90 \\
-Treasury\_Swap\_10Y & 1923.00 & -28.04 & 11.89 & -58.80 & -35.60 & -27.00 & -18.40 & -7.50 \\
-Treasury\_Swap\_20Y & 1923.00 & -36.25 & 15.23 & -85.00 & -47.60 & -36.50 & -24.10 & -7.90 \\
-Treasury\_Swap\_30Y & 1923.00 & -55.36 & 18.85 & -105.60 & -67.42 & -53.10 & -42.60 & -23.40 \\
+Treasury\_SF\_02Y & 4967.00 & -30.96 & 51.32 & -262.78 & -54.19 & -13.21 & 4.54 & 93.93 \\
+Treasury\_SF\_05Y & 4967.00 & -16.31 & 43.59 & -420.80 & -37.99 & -3.75 & 8.37 & 93.79 \\
+Treasury\_SF\_10Y & 4967.00 & -29.58 & 52.20 & -342.72 & -45.87 & -15.73 & 3.93 & 101.76 \\
+Treasury\_SF\_20Y & 4967.00 & -23.59 & 34.43 & -225.04 & -38.44 & -17.90 & -0.48 & 288.82 \\
+Treasury\_SF\_30Y & 3555.00 & -22.97 & 56.17 & -397.59 & -32.71 & -1.25 & 7.79 & 179.54 \\
 \bottomrule
 \end{tabular}
-\end{adjustbox}
 \end{table}
 
-The summary statistics in Table \ref{tab:summary_statistics} provide an overview of key variables relevant to our study on Treasury Spot-Futures arbitrage spreads. This section discusses the characteristics of these spreads and their implications for arbitrage activity in the Treasury market.
 
-\subsection{Treasury Spot-Futures Arbitrage Spreads}
-
-Treasury Spot-Futures arbitrage spreads measure deviations between the futures-implied risk-free rate and the maturity-matched Overnight Indexed Swap (OIS) rate. These deviations serve as indicators of market inefficiencies, funding constraints, and liquidity frictions.
 
 \begin{itemize}
-    \item \textbf{Treasury\_SF\_02Y:} The mean spread of 3.13 basis points, with a standard deviation of 17.26, suggests that short-term arbitrage spreads tend to be small on average but exhibit significant volatility. The maximum value of 95.29 and the minimum of -41.90 indicate substantial short-term fluctuations, likely influenced by Federal Reserve policy expectations and money market liquidity.
+\item \textbf{Treasury\_SF\_02Y:} The mean spread of -30.96 basis points, with a standard deviation of 51.32, suggests that short-term arbitrage spreads tend to be negative on average and exhibit significant volatility. The maximum value of 93.93 and the minimum of -262.78 indicate substantial short-term fluctuations, likely influenced by Federal Reserve policy expectations and money market liquidity.
 
-    \item \textbf{Treasury\_SF\_05Y:} With a mean of 11.61 basis points and a standard deviation of 13.28, the 5-year spread shows a greater average deviation than the 2-year maturity, implying more persistent pricing anomalies at this horizon. The interquartile range (from 2.30 to 21.11 basis points) suggests that while deviations are generally small, extreme cases (e.g., max 92.48) can create large arbitrage opportunities.
+\item \textbf{Treasury\_SF\_05Y:} With a mean of -16.31 basis points and a standard deviation of 43.59, the 5-year spread exhibits persistent deviations from parity. The interquartile range (from -37.99 to 8.37 basis points) suggests that while deviations are typically moderate, extreme cases (e.g., max 93.79 and min -420.80) can create large arbitrage opportunities, possibly reflecting stress episodes in funding markets.  
 
-    \item \textbf{Treasury\_SF\_10Y:} The mean spread of 2.54 basis points and standard deviation of 20.26 suggest that, while the average deviation is close to zero, significant dislocations occur. The wide range, from -76.69 to 67.82 basis points, highlights periods of market stress and funding constraints.
+\item \textbf{Treasury\_SF\_10Y:} The mean spread of -29.58 basis points and a standard deviation of 52.20 suggest that significant dislocations occur at this maturity. The wide range, from -342.72 to 101.76 basis points, highlights periods of market stress and funding constraints that can substantially impact arbitrageurs' ability to profitably exploit these deviations.  
 
-    \item \textbf{Treasury\_SF\_20Y:} A mean spread of -9.60 basis points, coupled with a standard deviation of 20.05, suggests a systematic negative deviation. This indicates that the futures-implied risk-free rate tends to understate the OIS rate for this maturity. The minimum value of -163.28 suggests large downward dislocations during stressed market conditions.
+\item \textbf{Treasury\_SF\_20Y:} A mean spread of -23.59 basis points, coupled with a standard deviation of 34.43, suggests that the futures-implied risk-free rate tends to understate the OIS rate for this maturity. The minimum value of -225.04 suggests large downward dislocations during stressed market conditions, while the maximum of 288.82 indicates occasional sharp upward spikes, likely reflecting variations in liquidity and hedging demand.  
 
-    \item \textbf{Treasury\_SF\_30Y:} The mean spread of 3.69 basis points and a standard deviation of 23.68 indicate even greater variation in long-term arbitrage spreads. The extreme values, ranging from -253.78 to 179.79 basis points, suggest that factors such as liquidity constraints, hedging demand, and market segmentation play a role in shaping these spreads.
+\item \textbf{Treasury\_SF\_30Y:} The mean spread of -22.97 basis points and a standard deviation of 56.17 indicate even greater variation in long-term arbitrage spreads. The extreme values, ranging from -397.59 to 179.54 basis points, suggest that factors such as liquidity constraints, hedging demand, and market segmentation play a crucial role in shaping these spreads over longer horizons.  
+
 \end{itemize}
+
 
 \subsection{Implications for Arbitrage Trading}
 
@@ -234,9 +203,11 @@ Overall, our replication effort closely aligns with the results presented in Seg
 
 \section{Task List}
 
+Both of us have worked on most of the items in this project. Below is just the list of tasks that each of us was more focused on:
+
 \begin{itemize}
     \item Haoshu: most .py functions for replication, latex file, creation of additional figure or tables
-    \item Guyanyu: data cleaning process, unit test, .ipynd files for presenting result, doit file
+    \item Guyanyu: data cleaning process, unit test, doit file
 \end{itemize}
 
 
