@@ -130,7 +130,7 @@ def task_test_load_bases_data():
 
 def task_latex_to_pdf():
     return {
-        'actions': ['python src/latex_to_pdf.py reports/Final_Report.tex'],
+        'actions': ['python src/latex_to_document.py reports/Final_Report.tex'],
         'file_dep': ['src/latex_to_document.py', 'reports/Final_Report.tex'],
         'targets': ['reports/Final_Report.pdf'],
         'clean': True,
