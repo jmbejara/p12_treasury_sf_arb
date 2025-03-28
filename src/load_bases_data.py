@@ -18,14 +18,12 @@ Coverage:
 
 Notes:
 - Certain functionality here is partially automated. In some places, the data
-  is manually extracted or stitched together. 
+  is manually extracted or stitched together.
 - The final output is typically combined into a single wide or long format
   dataset for convenience.
 """
 
-import numpy as np
 import pandas as pd
-from pathlib import Path
 
 from settings import config
 
@@ -40,18 +38,12 @@ DATA_DIR = config("DATA_DIR")
 ###############################################################################
 
 
-
-
-
 # def load_treasury_sf(data_dir=DATA_DIR, raw=False):
 #     """
 #     Placeholder for Treasury futures implied risk-free rate minus OIS from Siriwardane et al.
 #     Currently raises NotImplementedError.
 #     """
 #     raise NotImplementedError
-
-
-
 
 
 name_map = {
@@ -92,7 +84,7 @@ name_map = {
 
 def load_combined_spreads_wide(data_dir=DATA_DIR, raw=False, rename=True):
     """
-    Load the wide-format arbitrage spreads from Siriwardane et al. 
+    Load the wide-format arbitrage spreads from Siriwardane et al.
     If not raw, only keeps the columns labeled 'raw_*' in the original dataset
     and optionally renames them.
 
@@ -102,7 +94,9 @@ def load_combined_spreads_wide(data_dir=DATA_DIR, raw=False, rename=True):
     Box, Equity SF, TIPS, Treasury-Futures, etc.).
     """
     # The code references an external link for the .dta file
-    url = "https://www.dropbox.com/scl/fi/81jm3dbe856i7p17rjy87/arbitrage_spread_wide.dta?rlkey=ke78u464vucmn43zt27nzkxya&st=59g2n7dt&dl=1"
+    # Reference data here: U:\GitRepositories\final_projects_2025\p12_treasury_sf_arb\data_manual\reference
+    # url = "https://www.dropbox.com/scl/fi/81jm3dbe856i7p17rjy87/arbitrage_spread_wide.dta?rlkey=ke78u464vucmn43zt27nzkxya&st=59g2n7dt&dl=1"
+    url = "./data_manual/reference/arbitrage_spread_wide.dta"
     df = pd.read_stata(url).set_index("date")
 
     if raw:
@@ -115,27 +109,25 @@ def load_combined_spreads_wide(data_dir=DATA_DIR, raw=False, rename=True):
         return subset_df.reindex(sorted(subset_df.columns), axis=1)
 
 
+# def demo():
+#     """
+#     Demonstrates usage of some old vs. new data loading routines.
+#     """
+#     fxswap, fxbasis = read_usdjpyfxswap(config.DATA_DIR)
+#     tcf = read_treasury_cash_futures_bases(config.DATA_DIR)
+#     iss = read_interest_swap_spread_bases(config.DATA_DIR)
+#     df_old = read_combined_basis_file_OLD(config.DATA_DIR)
+#     df_new = load_combined_spreads_wide(data_dir=DATA_DIR)
 
-
-def demo():
-    """
-    Demonstrates usage of some old vs. new data loading routines.
-    """
-    fxswap, fxbasis = read_usdjpyfxswap(config.DATA_DIR)
-    tcf = read_treasury_cash_futures_bases(config.DATA_DIR)
-    iss = read_interest_swap_spread_bases(config.DATA_DIR)
-    df_old = read_combined_basis_file_OLD(config.DATA_DIR)
-    df_new = load_combined_spreads_wide(data_dir=DATA_DIR)
-
-    df_old.plot()
-    df_new.columns
-    # Example slice for TCF spreads in old data
-    df_old.loc["2010":"2020", ["Treasury_SF_02Y", "Treasury_SF_05Y", "Treasury_SF_10Y", "Treasury_SF_30Y"]].plot()
-    # Example slice in new data
-    df_new.loc["2010":"2020", ["Treasury_SF_10Y", "Treasury_SF_02Y", "Treasury_SF_20Y", "Treasury_SF_30Y"]].plot()
+#     df_old.plot()
+#     df_new.columns
+#     # Example slice for TCF spreads in old data
+#     df_old.loc["2010":"2020", ["Treasury_SF_02Y", "Treasury_SF_05Y", "Treasury_SF_10Y", "Treasury_SF_30Y"]].plot()
+#     # Example slice in new data
+#     df_new.loc["2010":"2020", ["Treasury_SF_10Y", "Treasury_SF_02Y", "Treasury_SF_20Y", "Treasury_SF_30Y"]].plot()
 
 
 if __name__ == "__main__":
-    # As a placeholder, we do not run anything by default. 
+    # As a placeholder, we do not run anything by default.
     # You can invoke the code by calling 'demo()' or other relevant functions.
     pass
