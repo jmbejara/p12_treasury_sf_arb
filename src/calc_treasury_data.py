@@ -253,7 +253,7 @@ def calc_treasury():
     df_wide["Treasury_SF_30Y"] = df_wide["tfut_30_rf"] - df_wide["tfut_30_ois"]
     # Select relevant columns
     df_out = df_wide[["Date", "Treasury_SF_2Y", "Treasury_SF_5Y", "Treasury_SF_10Y", "Treasury_SF_20Y", "Treasury_SF_30Y"]].copy()
-    df_out.fillna(method='ffill', inplace=True)
+    df_out.fillna(method='ffill', inplace=True, limit=5)
 
     
     # Save final output as Stata .dta file (or CSV if preferred)
