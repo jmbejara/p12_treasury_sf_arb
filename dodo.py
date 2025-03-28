@@ -132,7 +132,7 @@ def task_latex_to_document():
     return {
         'actions': ['python src/latex_to_document.py reports/Final_Report.tex'],
         'file_dep': ['src/latex_to_document.py', 'reports/Final_Report.tex'],
-        'targets': ['reports/Final_Report.pdf'],
+        'targets': ['Final_Report.pdf'],
         'clean': True,
     }
 
